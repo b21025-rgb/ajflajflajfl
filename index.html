@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plearner - 학습 플래너</title>
+    <style>
+        /* ==========================================================================
+           1. CSS 스타일 (style.css 통합)
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .container-fluid {
+            width: 100%;
+            max-width: 1400px;
+            padding: 30px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 입력창 및 공통 버튼 */
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+        }
+
+        .btn-secondary {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* 인증 및 성향조사 UI */
+        .auth-box, .survey-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .auth-box h2, .survey-box h2 {
+            margin-bottom: 10px;
+            color: #2C3E50;
+        }
+
+        .auth-box p, .survey-box p {
+            font-size: 14px;
+            color: #7F8C8D;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .subject-checkboxes label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .subject-checkboxes input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        /* 플래너 메인 레이아웃 */
+        .planner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 15px;
+        }
+
+        .status-alert {
+            background-color: #EBF8FF;
+            color: #2B6CB0;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .planner-layout {
+            display: flex;
+            gap: 20px;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .sidebar h3, .sidebar h4 {
+            margin-bottom: 15px;
+            color: #2D3748;
+        }
+
+        .automated-suggest {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #F7FAFC;
+            border-left: 4px solid #4A90E2;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* 7일 주간 달력 그리드 */
+        .calendar-grid {
+            flex: 4;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+        }
+
+        .day-column {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+
+        .day-header {
+            background: #EDF2F7;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .task-list {
+            padding: 10px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: #FFF;
+            transition: background-color 0.2s;
+        }
+
+        .task-list.dragover {
+            background-color: #EDF2F7;
+        }
+
+        /* 과목별 카드 색상 구분 디자인 */
+        .task-card {
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .task-card:active {
+            cursor: grabbing;
+        }
+
+        .subject-kor { background-color: #E53E3E; } /* 국어 - 빨강 */
+        .subject-math { background-color: #3182CE; } /* 수학 - 파랑 */
+        .subject-eng { background-color: #D69E2E
